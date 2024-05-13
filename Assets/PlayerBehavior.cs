@@ -131,6 +131,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Jump()
     {
+        Me.velocity = new Vector2(0f, 0f);
         Me.AddForce(new Vector2(DirectionBehavior.GetPosition() * JumpHorizontalDistanceMultiplicator * JumpForce, JumpForce));
     }
 }
