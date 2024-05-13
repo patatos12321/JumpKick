@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,43 +26,34 @@ public class PlayerBehavior : MonoBehaviour
     void Start()
     {
         Me = GetComponent<Rigidbody2D>();
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            StartAndroid();
+        }
+    }
+
+    private void StartAndroid()
+    {
         screenCenterX = Screen.width * 0.5f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.touchCount > 0)
+
+        if (Application.platform != RuntimePlatform.Android)
         {
-            for (int i = 0; i < Input.touchCount; i++)
-            {
-                Touch currentTouch = Input.GetTouch(i);
-
-                // if it began this frame
-                if (currentTouch.phase == TouchPhase.Began)
-                {
-                    if (currentTouch.position.x > screenCenterX && PlayerDirection == Direction.Left)
-                    {
-                        // if the touch position is to the right of center
-                        // move right
-                        if (canJump)
-                        {
-                            doJumpKick = true;
-                        }
-                    }
-                    else if (currentTouch.position.x < screenCenterX && PlayerDirection == Direction.Right)
-                    {
-                        // if the touch position is to the left of center
-                        // move left
-                        if (canJump)
-                        {
-                            doJumpKick = true;
-                        }
-                    }
-                }
-            }
+            UpdateOthers();
         }
+        else
+        {
+            UpdateAndroid();
 
+        }
+    }
+
+    private void UpdateOthers()
+    {
         if (Input.GetKeyUp(JumpKey))
         {
             if (canJump)
@@ -77,16 +66,43 @@ public class PlayerBehavior : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+    }
 
-        if (Application.platform == RuntimePlatform.Android)
+    private void UpdateAndroid()
+    {
+        if (Input.touchCount > 0)
         {
-            if (Input.GetKey(KeyCode.Escape))
+            for (int i = 0; i < Input.touchCount; i++)
             {
-                // Insert Code Here (I.E. Load Scene, Etc)
-                // OR Application.Quit();
+                Touch currentTouch = Input.GetTouch(i);
 
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                // if it began this frame
+                if (currentTouch.phase == TouchPhase.Began)
+                {
+                    if (currentTouch.position.x > screenCenterX && PlayerDirection == Direction.Left)
+                    {
+                        // if the touch position is to the right of center and I'm facing left
+                        if (canJump)
+                        {
+                            doJumpKick = true;
+                        }
+                    }
+                    else if (currentTouch.position.x < screenCenterX && PlayerDirection == Direction.Right)
+                    {
+                        // if the touch position is to the left of center and I'm facing right
+                        if (canJump)
+                        {
+                            doJumpKick = true;
+                        }
+                    }
+                }
             }
+        }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            //Restart
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
@@ -98,25 +114,19 @@ public class PlayerBehavior : MonoBehaviour
             Kick();
 
             canJump = false;
-            doJumpKick= false;
+            doJumpKick = false;
         }
 
         nbFrameSinceJump++;
 
-        if (nbFrameSinceJump > JumpDelay) 
+        if (nbFrameSinceJump > JumpDelay)
         { canJump = true; nbFrameSinceJump = 0; }
     }
 
     private void Kick()
     {
-        if (PlayerDirection == Direction.Right)
-        {
-            Leg.AddForce(new Vector2(KickForce, KickForce));
-        }
-        else // LEFT
-        {
-            Leg.AddForce(new Vector2(-KickForce, KickForce));
-        }
+        var myKickForce = PlayerDirection == Direction.Right ? KickForce : -KickForce;
+        Leg.AddForce(new Vector2(myKickForce, KickForce));
     }
 
     private void Jump()

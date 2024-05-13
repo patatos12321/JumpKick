@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum Direction { Left, Right}
 public class DirectionBehavior : MonoBehaviour
 {
+    private static bool LeftRight = false;
     public float MaxX;
     public float MinX;
     public int NumberOfPositions;
@@ -22,16 +20,14 @@ public class DirectionBehavior : MonoBehaviour
     void Start()
     {
         movementSize = (MaxX - MinX) / NumberOfPositions;
-        var rand = new System.Random();
-        var monRand = rand.Next(100);
-        if (monRand > 50)
-        {
-            CurrentDirection = Direction.Left;
-        }
-        else
-        {
-            CurrentDirection = Direction.Right;
-        }
+
+        SetDirection();
+    }
+
+    private void SetDirection()
+    {
+        LeftRight = !LeftRight;
+        CurrentDirection = LeftRight ? Direction.Left : Direction.Right;
     }
 
     // Update is called once per frame
