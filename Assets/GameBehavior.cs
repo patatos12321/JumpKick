@@ -24,6 +24,7 @@ public class GameBehavior : MonoBehaviour
         {
             scoreLeft = 0;
             scoreRight = 0;
+            IsNewGame = false;
         }
 
         TextScoreRight.text = DisplayScoreRight;
@@ -41,6 +42,14 @@ public class GameBehavior : MonoBehaviour
             scoreRight++;
         }
         scoredDirection = direction;
-        SceneManager.LoadScene("Goal");
+
+        if (scoreLeft >=3 || scoreRight >= 3)
+        {
+            SceneManager.LoadScene("Win");
+        }
+        else
+        {
+            SceneManager.LoadScene("Goal");
+        }
     }
 }
