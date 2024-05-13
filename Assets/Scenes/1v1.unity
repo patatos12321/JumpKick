@@ -945,6 +945,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &847004253 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 8093584414402813582, guid: 7ab6463cab572cd44a87613870ee7d54, type: 3}
+  m_PrefabInstance: {fileID: 8093584414406197371}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1031336488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1453,7 +1458,7 @@ GameObject:
   - component: {fileID: 1490775419}
   - component: {fileID: 1490775418}
   m_Layer: 0
-  m_Name: GoalColliderLeft
+  m_Name: GoalLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1472,6 +1477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Side: 0
+  OwnPlayer: {fileID: 847004253}
 --- !u!61 &1490775419
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2081,6 +2087,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1625667390}
   m_CullTransparentMesh: 1
+--- !u!50 &1641804990 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 8093584414402813582, guid: 7ab6463cab572cd44a87613870ee7d54, type: 3}
+  m_PrefabInstance: {fileID: 1031336488}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1951066398
 GameObject:
   m_ObjectHideFlags: 0
@@ -2320,7 +2331,7 @@ GameObject:
   - component: {fileID: 2000313572}
   - component: {fileID: 2000313571}
   m_Layer: 0
-  m_Name: GoalColliderRight
+  m_Name: GoalRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2404,6 +2415,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Side: 1
+  OwnPlayer: {fileID: 1641804990}
 --- !u!61 &2000313572
 BoxCollider2D:
   m_ObjectHideFlags: 0
