@@ -6,16 +6,16 @@ public class PlayerBehavior : MonoBehaviour
     public float JumpHorizontalDistanceMultiplicator = 0.1f;
     public int JumpForce = 10;
     public int KickForce = 10;
-    public int JumpDelay = 20;
     public KeyCode JumpKey = KeyCode.None;
 
     public Rigidbody2D Leg;
-    public DirectionBehavior DirectionBehavior;
+    private DirectionBehavior directionBehavior;
     public Direction PlayerDirection;
+
+    public BoosterBehavior BoosterBehavior;
 
     private Rigidbody2D Me;
 
-    private bool canJump = true;
     private bool doJumpKick = false;
 
     private int nbFrameSinceJump = 0;
@@ -26,6 +26,7 @@ public class PlayerBehavior : MonoBehaviour
     void Start()
     {
         Me = GetComponent<Rigidbody2D>();
+        directionBehavior = GameObject.FindObjectOfType<DirectionBehavior>();
         if (Application.platform == RuntimePlatform.Android)
         {
             StartAndroid();
@@ -56,10 +57,7 @@ public class PlayerBehavior : MonoBehaviour
     {
         if (Input.GetKeyUp(JumpKey))
         {
-            if (canJump)
-            {
-                doJumpKick = true;
-            }
+            doJumpKick = true;
         }
 
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
@@ -79,22 +77,10 @@ public class PlayerBehavior : MonoBehaviour
                 // if it began this frame
                 if (currentTouch.phase == TouchPhase.Began)
                 {
-                    if (currentTouch.position.x > screenCenterX && PlayerDirection == Direction.Left)
-                    {
-                        // if the touch position is to the right of center and I'm facing left
-                        if (canJump)
-                        {
-                            doJumpKick = true;
-                        }
-                    }
-                    else if (currentTouch.position.x < screenCenterX && PlayerDirection == Direction.Right)
-                    {
+                    // if the touch position is to the right of center and I'm facing left
+                    doJumpKick = currentTouch.position.x > screenCenterX && PlayerDirection == Direction.Left
                         // if the touch position is to the left of center and I'm facing right
-                        if (canJump)
-                        {
-                            doJumpKick = true;
-                        }
-                    }
+                        || currentTouch.position.x < screenCenterX && PlayerDirection == Direction.Right;
                 }
             }
         }
@@ -113,25 +99,31 @@ public class PlayerBehavior : MonoBehaviour
             Jump();
             Kick();
 
-            canJump = false;
             doJumpKick = false;
         }
 
         nbFrameSinceJump++;
-
-        if (nbFrameSinceJump > JumpDelay)
-        { canJump = true; nbFrameSinceJump = 0; }
     }
 
     private void Kick()
     {
-        var myKickForce = PlayerDirection == Direction.Right ? KickForce : -KickForce;
+        var sign = (PlayerDirection == Direction.Right ? 1 : -1);
+        var myKickForce = KickForce * sign;
+        Leg.rotation = 45f * sign;
         Leg.AddForce(new Vector2(myKickForce, KickForce));
     }
 
     private void Jump()
     {
-        Me.velocity = new Vector2(0f, 0f);
-        Me.AddForce(new Vector2(DirectionBehavior.GetPosition() * JumpHorizontalDistanceMultiplicator * JumpForce, JumpForce));
+        if (BoosterBehavior.Multiplicator == 1)
+        {
+            //Only Max Jumps reset velocity
+            Me.velocity = new Vector2(0f, 0f);
+        }
+
+        var myBoostedJumpForce = JumpForce * BoosterBehavior.Multiplicator;
+        Me.AddForce(new Vector2(directionBehavior.GetPosition() * myBoostedJumpForce, (1 - (Mathf.Abs(directionBehavior.GetPosition()) / 2)) * myBoostedJumpForce));
+
+        BoosterBehavior.Boost();
     }
 }
